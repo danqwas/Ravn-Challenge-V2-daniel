@@ -29,13 +29,17 @@ async function bootstrap() {
   app.use(cookieParser());
   // Swagger Setup
   const options = new DocumentBuilder()
-    .setTitle('API Documentation')
-    .setDescription('API documentation for your application')
+    .setTitle('Petstore API')
+    .setDescription('Petstore API from ravn challenge')
     .setVersion('1.0')
-    .addTag('api')
+    .setContact(
+      'Daniel',
+      'https://github.com/danqwas',
+      'daniel.echegaray.apac@outlook.com.pe',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api-docs', app, document);
   await app.listen(3000);
 }
 bootstrap();
