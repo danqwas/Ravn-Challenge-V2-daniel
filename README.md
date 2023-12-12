@@ -20,7 +20,7 @@ $ docker pull postgres:14.3
 
 ```bash
 # change .env file with the data about your dataBase
-$ .env.example --> .env
+$ .env.template --> .env
 
 # build docker image
 $ docker compose up -d
