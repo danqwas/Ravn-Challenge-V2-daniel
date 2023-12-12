@@ -1,26 +1,6 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 🛍️ Tiny Store Challenge
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Tiny Store is a Rest API for a simple store. It uses [Nest](https://github.com/nestjs/nest) framework.
 
 ## Description
 
@@ -29,12 +9,28 @@
 ## Installation
 
 ```bash
+# Install the dependencies
 $ yarn install
+
+# Install Docker and Postgres
+$ docker pull postgres:14.3
 ```
 
 ## Running the app
 
 ```bash
+# change .env file with the data about your dataBase
+$ .env.example --> .env
+
+# build docker image
+$ docker compose up -d
+
+# build the database tables with prisma command
+$ npx prisma migrate dev --name init
+
+# if you need to reset the database
+$ npx prisma migrate reset
+
 # development
 $ yarn run start
 
@@ -45,17 +41,18 @@ $ yarn run start:dev
 $ yarn run start:prod
 ```
 
+## 🔐 Environment Variables
+
+- `DB_PASSWORD`: Database password
+- `POSTGRES_DB`: Database name
+- `POSTGRES_USER`: Database user
+- `DATABASE_URL`: Database URL
+
 ## Test
 
 ```bash
 # unit tests
 $ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
 ```
 
 ## Support
@@ -64,10 +61,13 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Author - Daniel Echegaray
+- GitHub - <https://github.com/danqwas>
 
-## License
+## Features
 
-Nest is [MIT licensed](LICENSE).
+- Authentication using JWT Strategy, Guards & Custom Decorators
+- Authorization based on RBAC with two roles: CUSTOMER & MANAGER
+- Clean folder structure, commented code & API documentation with Swagger
+- Managers can create, read, update & delete Products. Clients can read visible products, buy products, and check their cart
+- Prisma Global Module, Singletons for Firebase Upload Service & various utilities
