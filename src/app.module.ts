@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
+import { HidePasswordInterceptor } from './interceptors/hide-password.interceptor';
 
 @Module({
   imports: [
@@ -15,6 +16,11 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: 'APP_INTERCEPTOR',
+      useClass: HidePasswordInterceptor,
+    },
+  ],
 })
 export class AppModule {}
