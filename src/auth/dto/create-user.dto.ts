@@ -8,15 +8,31 @@ import {
   MinLength,
 } from 'class-validator';
 
+import { ApiProperty } from '@nestjs/swagger';
+import { UserRole } from '@prisma/client';
+
 export class CreateUserDto {
+  @ApiProperty({
+    example: '9zTqH@example.com',
+  })
   @IsEmail()
   email: string;
 
+  @ApiProperty({
+    example: 'Daniel',
+  })
   @IsString()
   firstName: string;
 
+  @ApiProperty({
+    example: 'Echegaray',
+  })
   @IsString()
   lastName: string;
+
+  @ApiProperty({
+    example: 'Abc123456',
+  })
   @IsString()
   @MinLength(6)
   @MaxLength(50)
@@ -28,5 +44,8 @@ export class CreateUserDto {
 
   @IsArray()
   @IsOptional()
-  roles: string[];
+  @ApiProperty({
+    example: ['CLIENT'],
+  })
+  roles: UserRole[];
 }
