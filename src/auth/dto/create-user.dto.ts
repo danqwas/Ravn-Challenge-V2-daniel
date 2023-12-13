@@ -14,24 +14,28 @@ import { UserRole } from '@prisma/client';
 export class CreateUserDto {
   @ApiProperty({
     example: '9zTqH@example.com',
+    description: 'The email of the user',
   })
   @IsEmail()
   email: string;
 
   @ApiProperty({
     example: 'Daniel',
+    description: 'The first name of the user',
   })
   @IsString()
   firstName: string;
 
   @ApiProperty({
     example: 'Echegaray',
+    description: 'The last name of the user',
   })
   @IsString()
   lastName: string;
 
   @ApiProperty({
     example: 'Abc123456',
+    description: 'The password of the user',
   })
   @IsString()
   @MinLength(6)
@@ -46,6 +50,7 @@ export class CreateUserDto {
   @IsOptional()
   @ApiProperty({
     example: ['CLIENT'],
+    description: 'The roles of the user',
   })
   roles: UserRole[];
 }
