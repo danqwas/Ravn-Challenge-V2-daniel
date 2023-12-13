@@ -17,6 +17,7 @@ async function main() {
       roles: {
         set: [UserRole.CLIENT],
       },
+      isActive: true,
     },
   });
 
@@ -29,6 +30,7 @@ async function main() {
       roles: {
         set: [UserRole.MANAGER],
       },
+      isActive: true,
     },
   });
 
