@@ -1,26 +1,82 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import * as argon2 from 'argon2';
+import { PrismaService } from 'prisma/prisma.service';
+
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+
+import { CreateUserDto, LoginUserDto } from './dto';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  // Create an user service
+  async createAnUser(createUserDto: CreateUserDto): Promise<User> {
+    // first we need to hash the password
+    const hashedPassword = await argon2.hash(createUserDto.password);
+
+    // then we need to create the user with the hashed password
+    return await this.prisma.user.create({
+      data: {
+        ...createUserDto,
+        password: hashedPassword,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  // Login an user and return a Json with the JWT
+  async loginAnUser(loginUserDto: LoginUserDto) {
+    // first we need to find the user
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: loginUserDto.email,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedException('Credentials are not valid');
+    }
+    // then we need to compare the password
+    const isPasswordValid = await argon2.verify(
+      user.password,
+      loginUserDto.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Credentials are not valid');
+    }
+    // check the json web token
+    return {
+      ...user,
+      access_token: this.getJsonWebToken({
+        id: user.id,
+        email: user.email,
+        roles: user.roles,
+      }),
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  // Logout an user and remove the JWT token
+  logoutAnUser() {
+    // this is beacause the JWT token should be removed in the client-side
+    return {
+      success: true,
+      message: 'User logged out',
+    };
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+  getJsonWebToken(payload: JwtPayload) {
+    const { id, email, roles } = payload;
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const token = this.jwtService.sign({
+      id,
+      email,
+      roles,
+    });
+
+    return token;
   }
 }
