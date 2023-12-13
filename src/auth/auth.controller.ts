@@ -1,45 +1,51 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { CreateUserDto, LoginUserDto } from './dto';
 
-@ApiTags('auth')
-@Controller({ path: 'auth', version: '1' })
+@ApiTags('Auth Controller')
+@Controller({ path: 'auth', version: 'v1' })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @ApiProperty({
+    description: 'Create user',
+    type: CreateUserDto,
+    example: {
+      email: '9zTqH@example.com',
+      password: 'Abc123456',
+      firstName: 'John',
+      lastName: 'Doe',
+      roles: ['CLIENT'],
+    },
+  })
+  @Post('register')
+  create(@Body() createAuthDto: CreateUserDto) {
+    return this.authService.createAnUser(createAuthDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @ApiProperty({
+    description: 'Login user',
+    type: LoginUserDto,
+    example: {
+      email: '9zTqH@example.com',
+      password: 'Abc123456',
+    },
+  })
+  @Post('login')
+  login(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.loginAnUser(loginUserDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @ApiProperty({
+    description: 'Logout user',
+  })
+  @ApiOperation({
+    summary: 'Returns success, JWT should be removed in the client-side',
+  })
+  @Post('logout')
+  async logout() {
+    return this.authService.logoutAnUser();
   }
 }
