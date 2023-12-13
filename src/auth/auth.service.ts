@@ -1,10 +1,10 @@
 import * as argon2 from 'argon2';
-import { PrismaService } from 'prisma/prisma.service';
 
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
@@ -60,7 +60,7 @@ export class AuthService {
   }
 
   // Logout an user and remove the JWT token
-  logoutAnUser() {
+  async logoutAnUser() {
     // this is beacause the JWT token should be removed in the client-side
     return {
       success: true,
