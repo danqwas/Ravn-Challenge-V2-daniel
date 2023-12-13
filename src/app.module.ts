@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
 import { HidePasswordInterceptor } from './interceptors/hide-password.interceptor';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { HidePasswordInterceptor } from './interceptors/hide-password.intercepto
     }),
     PrismaModule,
     AuthModule,
+    ProductsModule,
   ],
   controllers: [],
   providers: [
