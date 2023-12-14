@@ -46,8 +46,8 @@ enum UserRole {
 model ProductImage {
   id        String     @id @default(uuid())  @db.Uuid
   url       String
-  product   Product @relation(fields: [productId], references: [id])
-  productId String
+  product_id String @db.Uuid
+  product Product @relation(fields: [product_id], references: [id])
 }
 
 model Like {
@@ -55,7 +55,7 @@ model Like {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
+  productId String @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -74,7 +74,7 @@ model CartItem {
   cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   cartId    String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
+  productId String @db.Uuid
   quantity  Int
 }
 
@@ -93,7 +93,12 @@ model OrderItem {
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId   String
   product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
-  productId String
+  productId String @db.Uuid
   price     Float
   quantity  Int
+}
+model TokenBlacklist {
+  id        String   @id @default(uuid())  @db.Uuid
+  token     String   @unique
+  createdAt DateTime @default(now()) 
 }
