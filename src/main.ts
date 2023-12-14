@@ -32,6 +32,7 @@ async function bootstrap() {
     .setTitle('Petstore API')
     .setDescription('Petstore API from ravn challenge')
     .setVersion('1.0')
+    .addBearerAuth()
     .setContact(
       'Daniel',
       'https://github.com/danqwas',

@@ -1,8 +1,17 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiProperty,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { User } from '@prisma/client';
 
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto } from './dto';
+import { Auth } from './decorators/auth.decorator';
+import { GetUser } from './decorators/get-user.decorator';
+import { CreateUserDto, LoginUserDto, LogoutUserDto } from './dto';
 
 @ApiTags('Auth Controller')
 @Controller({ path: 'auth', version: '1' })
@@ -39,13 +48,20 @@ export class AuthController {
   }
 
   @ApiProperty({
-    description: 'Logout user',
+    description: 'JWT token to be used for user logout',
+    example: 'your_jwt_token_here',
   })
   @ApiOperation({
-    summary: 'Returns success, JWT should be removed in the client-side',
+    summary: 'Logout user',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Success, JWT should be removed on the client-side',
+  })
+  @Auth() // Replace with your actual Auth decorator
+  @ApiBearerAuth()
   @Post('logout')
-  async logout() {
-    return this.authService.logoutAnUser();
+  async logout(@Body() logoutUserDto: LogoutUserDto, @GetUser() user: User) {
+    return this.authService.logoutAnUser(logoutUserDto, user);
   }
 }

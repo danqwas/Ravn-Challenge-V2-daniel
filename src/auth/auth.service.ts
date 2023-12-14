@@ -6,6 +6,7 @@ import { User } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUserDto, LoginUserDto } from './dto';
+import { LogoutUserDto } from './dto/logout-user.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
@@ -60,8 +61,34 @@ export class AuthService {
   }
 
   // Logout an user and remove the JWT token
-  async logoutAnUser() {
-    // this is beacause the JWT token should be removed in the client-side
+  async logoutAnUser(logoutUserDto: LogoutUserDto, user: User) {
+    const { refreshToken } = logoutUserDto;
+
+    // Check if the token is already in the blacklist
+    const existingToken = await this.prisma.tokenBlacklist.findFirst({
+      where: {
+        token: refreshToken,
+        userId: user.id,
+      },
+      orderBy: {
+        createdAt: 'desc', // Ordenar por createdAt en orden descendente
+      },
+    });
+
+    // If the token is not in the blacklist, add it
+    if (!existingToken) {
+      await this.prisma.tokenBlacklist.create({
+        data: {
+          token: refreshToken,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+        },
+      });
+    }
+
     return {
       success: true,
       message: 'User logged out',

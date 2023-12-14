@@ -10,19 +10,19 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(uuid())  @db.Uuid
-  email     String     @unique
-  firstName String?
-  lastName  String?
-  password  String
-  isActive  Boolean    @default(true)
-  roles     UserRole[] @default([])
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now())
-  likes     Like[]
-  carts     Cart[]
-  orders    Order[]
-
+  id           String           @id @default(uuid())  @db.Uuid
+  email        String           @unique
+  firstName    String?
+  lastName     String?
+  password     String
+  isActive     Boolean          @default(true)
+  roles        UserRole[]       @default([])
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @default(now())
+  cart         Cart?
+  likes        Like[]
+  orders       Order[]
+  tokenBlacklists TokenBlacklist[]
 }
 model Product {
   id          String     @id @default(uuid())  @db.Uuid
@@ -47,15 +47,15 @@ model ProductImage {
   id        String     @id @default(uuid())  @db.Uuid
   url       String
   product_id String @db.Uuid
-  product Product @relation(fields: [product_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
 }
 
 model Like {
-  id        String     @id @default(uuid())  @db.Uuid
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String @db.Uuid
+ id        String     @id @default(uuid())  @db.Uuid
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String     @db.Uuid
+  product   Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id String   @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -63,25 +63,25 @@ model Like {
 model Cart {
   id        String     @id @default(uuid())  @db.Uuid
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String     @unique
-  items     CartItem[]
+  userId    String     @db.Uuid @unique
+  cardItems CartItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now())
 }
 
 model CartItem {
   id        String     @id @default(uuid())  @db.Uuid
-  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  cartId    String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String @db.Uuid
+  cart      Cart       @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  cart_id   String     @db.Uuid
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String     @db.Uuid
   quantity  Int
 }
 
 model Order {
   id        String     @id @default(uuid())  @db.Uuid
   user      User        @relation(fields: [userId], references: [id])
-  userId    String
+  userId    String      @db.Uuid
   items     OrderItem[]
   total     Float
   createdAt DateTime    @default(now())
@@ -91,7 +91,7 @@ model Order {
 model OrderItem {
   id        String     @id @default(uuid())  @db.Uuid
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId   String
+  orderId   String   @db.Uuid
   product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
   productId String @db.Uuid
   price     Float
@@ -101,4 +101,7 @@ model TokenBlacklist {
   id        String   @id @default(uuid())  @db.Uuid
   token     String   @unique
   createdAt DateTime @default(now()) 
+  // relation with User
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
 }

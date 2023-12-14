@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { HidePasswordInterceptor } from './interceptors/hide-password.interceptor';
 import { ProductsModule } from './products/products.module';
 
@@ -22,6 +23,10 @@ import { ProductsModule } from './products/products.module';
     {
       provide: 'APP_INTERCEPTOR',
       useClass: HidePasswordInterceptor,
+    },
+    {
+      provide: 'APP_INTERCEPTOR',
+      useClass: AuthInterceptor,
     },
   ],
 })

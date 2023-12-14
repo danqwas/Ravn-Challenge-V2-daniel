@@ -5,8 +5,8 @@ import { PrismaClient, UserRole } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  const clientPassword = await argon2.hash('clientPassword');
-  const managerPassword = await argon2.hash('managerPassword');
+  const clientPassword = await argon2.hash('ClientPassword123');
+  const managerPassword = await argon2.hash('ManagerPassword123');
 
   const client = await prisma.user.create({
     data: {

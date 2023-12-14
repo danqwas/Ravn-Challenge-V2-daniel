@@ -21,6 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
   async validate(payload: JwtPayload): Promise<User> {
     const { id, email, roles } = payload;
+
     const user = await this.primaService.user.findUnique({
       where: {
         id,
