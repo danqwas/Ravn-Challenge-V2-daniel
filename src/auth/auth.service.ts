@@ -20,7 +20,15 @@ export class AuthService {
   async createAnUser(createUserDto: CreateUserDto): Promise<User> {
     // first we need to hash the password
     const hashedPassword = await argon2.hash(createUserDto.password);
-
+    const existingUser = await this.prisma.user.findUnique({
+      where: {
+        email: createUserDto.email,
+      },
+    });
+    if (existingUser) {
+      // Handle the case where the email already exists
+      throw new Error('User with this email already exists');
+    }
     // then we need to create the user with the hashed password
     return await this.prisma.user.create({
       data: {
@@ -74,6 +82,15 @@ export class AuthService {
         createdAt: 'desc', // Ordenar por createdAt en orden descendente
       },
     });
+    const userExists = await this.prisma.user.findUnique({
+      where: {
+        id: user.id, // Replace with the actual user ID
+      },
+    });
+
+    if (!userExists) {
+      throw new UnauthorizedException('User not found');
+    }
 
     // If the token is not in the blacklist, add it
     if (!existingToken) {
@@ -82,7 +99,7 @@ export class AuthService {
           token: refreshToken,
           user: {
             connect: {
-              id: user.id,
+              id: userExists.id,
             },
           },
         },

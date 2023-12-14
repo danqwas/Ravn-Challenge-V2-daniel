@@ -11,7 +11,7 @@ import { UserRole } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto } from './dto';
+import { CreateUserDto, LoginUserDto, LogoutUserDto } from './dto';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 describe('AuthService', () => {
@@ -58,6 +58,12 @@ describe('AuthService', () => {
 
       const user = await service.createAnUser(createUserDto);
 
+      // delete the user created
+      await prismaService.user.delete({
+        where: {
+          id: user.id,
+        },
+      });
       expect(user.email).toEqual(createUserDto.email);
       // Add more assertions based on your data model
     });
@@ -134,8 +140,31 @@ describe('AuthService', () => {
   });
 
   describe('logoutAnUser', () => {
+    const logoutUserDto: LogoutUserDto = {
+      refreshToken: 'token',
+    };
+
+    const loginUserDto: LoginUserDto = {
+      email: 'test@example.com',
+      password: 'Test123456',
+    };
+    const createUserDto: CreateUserDto = {
+      email: 'test@example.com',
+      password: 'Test123456',
+      firstName: 'John',
+      lastName: 'Doe',
+      roles: ['CLIENT'],
+    };
+
     it('should successfully log out an existing user', async () => {
-      const result = await service.logoutAnUser();
+      await service.createAnUser(createUserDto);
+      const user = await service.loginAnUser(loginUserDto);
+      const result = await service.logoutAnUser(logoutUserDto, user);
+      await prismaService.user.delete({
+        where: {
+          id: user.id,
+        },
+      });
 
       expect(result.success).toBeTruthy();
       expect(result.message).toEqual('User logged out');

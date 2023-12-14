@@ -10,7 +10,7 @@ import { User, UserRole } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto } from './dto';
+import { CreateUserDto, LoginUserDto, LogoutUserDto } from './dto';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 describe('AuthController', () => {
@@ -139,6 +139,22 @@ describe('AuthController', () => {
 
   describe('logout', () => {
     it('should log out an existing user', async () => {
+      const logoutUserDto: LogoutUserDto = {
+        refreshToken: 'token',
+      };
+
+      const user: User = {
+        id: uuidv4(),
+        email: 'test@example.com',
+        roles: [UserRole.CLIENT],
+        password: 'Test123456',
+        firstName: 'John',
+        lastName: 'Doe',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isActive: true,
+      };
+
       jest.spyOn(authService, 'logoutAnUser').mockImplementation(() =>
         Promise.resolve({
           success: true,
@@ -146,7 +162,7 @@ describe('AuthController', () => {
         }),
       );
 
-      expect(await authController.logout()).toEqual({
+      expect(await authController.logout(logoutUserDto, user)).toEqual({
         success: true,
         message: 'User logged out',
       });
