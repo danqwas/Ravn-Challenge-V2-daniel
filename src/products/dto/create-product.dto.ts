@@ -1,4 +1,9 @@
-import { IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -60,5 +65,6 @@ export class CreateProductDto {
     example: true,
     description: 'Whether the product is visible or not',
   })
-  isVisible?: boolean = true;
+  @IsOptional()
+  isVisible: boolean;
 }
