@@ -1,5 +1,4 @@
 import { diskStorage } from 'multer';
-import { Auth } from 'src/auth/decorators/auth.decorator';
 
 import {
   Body,
@@ -24,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 
+import { Auth } from '../auth/decorators';
 import { CreateProductDto, FindProductQueryDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
@@ -110,6 +110,12 @@ export class ProductsController {
     return this.productsService.update(id, updateProductDto);
   }
 
+  /**
+   * Deletes a product.
+   *
+   * @param {string} id - The ID of the product to delete.
+   * @return {any} The result of the delete operation.
+   */
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a product by id' })
   @ApiBearerAuth()
@@ -118,6 +124,14 @@ export class ProductsController {
     return this.productsService.delete(id);
   }
 
+  /**
+   * Filters the uploaded file based on its extension.
+   *
+   * @param {Object} req - the request object
+   * @param {Object} file - the uploaded file object
+   * @param {function} cb - the callback function
+   * @return {undefined} no return value
+   */
   @Post(':id/upload')
   @ApiOperation({ summary: 'Upload an image to a product' })
   @UseInterceptors(
@@ -160,6 +174,13 @@ export class ProductsController {
     return await this.productsService.addAnImage(file, id);
   }
 
+  /**
+   * Remove an image from the product.
+   *
+   * @param {string} productId - The ID of the product.
+   * @param {string} imageId - The ID of the image to remove.
+   * @return {Promise<void>} A promise that resolves when the image is removed.
+   */
   @Delete(':productId/images/:imageId')
   @ApiOperation({ summary: 'Remove an image from a product' })
   @ApiBearerAuth()

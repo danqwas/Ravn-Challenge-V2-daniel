@@ -1,12 +1,11 @@
-import { PrismaService } from 'prisma/prisma.service';
-import { FirebaseService } from 'src/firebase/firebase.service';
-
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
+import { PrismaService } from '../../prisma/prisma.service';
+import { FirebaseService } from '../firebase/firebase.service';
 import { FindProductQueryDto, UpdateProductDto } from './dto';
 import { CreateProductDto } from './dto/create-product.dto';
 
