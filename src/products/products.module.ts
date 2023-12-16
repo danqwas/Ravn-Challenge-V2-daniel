@@ -10,5 +10,6 @@ import { ProductsService } from './products.service';
   imports: [AuthModule],
   controllers: [ProductsController],
   providers: [ProductsService, FirebaseService],
+  exports: [ProductsService],
 })
 export class ProductsModule {}

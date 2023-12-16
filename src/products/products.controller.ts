@@ -28,7 +28,10 @@ import { CreateProductDto, FindProductQueryDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
 @ApiTags('Products')
-@Controller('products')
+@Controller({
+  path: 'products',
+  version: '1',
+})
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   /**
@@ -52,6 +55,8 @@ export class ProductsController {
    */
   @Get()
   @ApiOperation({ summary: 'Get all products' })
+  @Auth(UserRole.MANAGER)
+  @ApiBearerAuth()
   getProducts(@Query() findProductQueryDto: FindProductQueryDto) {
     return this.productsService.getAllProducts(findProductQueryDto);
   }

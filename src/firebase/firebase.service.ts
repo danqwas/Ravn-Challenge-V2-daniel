@@ -20,15 +20,18 @@ export class FirebaseService {
     const clientEmail = configService.get('FIREBASE_CLIENT_EMAIL');
     const storageBucket = configService.get('FIREBASE_STORAGE_BUCKET');
 
-    this.app = admin.initializeApp({
-      credential: admin.credential.cert({
+    this.app = admin.initializeApp(
+      {
+        credential: admin.credential.cert({
+          projectId: projectId,
+          clientEmail: clientEmail,
+          privateKey,
+        }),
         projectId: projectId,
-        clientEmail: clientEmail,
-        privateKey,
-      }),
-      projectId: projectId,
-      storageBucket: storageBucket,
-    });
+        storageBucket: storageBucket,
+      },
+      'default',
+    );
   }
 
   async upload(file: Express.Multer.File) {
