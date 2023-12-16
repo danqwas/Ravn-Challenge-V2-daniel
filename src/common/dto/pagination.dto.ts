@@ -1,24 +1,25 @@
-import { Transform, TransformFnParams } from 'class-transformer';
-import { IsNumber, IsOptional, Max, Min } from 'class-validator';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
+
+import { ApiProperty } from '@nestjs/swagger';
 
 // pagination query dto
 export class PaginationQueryDto {
-  @IsNumber()
+  @ApiProperty({
+    example: 1,
+    description: 'The limit of items per page',
+  })
+  @IsInt()
   @Min(1)
   @Max(50)
   @IsOptional()
-  @Transform(({ value }: TransformFnParams) => parseInt(value, 10))
-  limit: number;
+  limit?: number;
 
-  @IsNumber()
+  @ApiProperty({
+    example: 0,
+    description: 'The offset of items',
+  })
+  @IsInt()
   @Min(0)
   @IsOptional()
-  @Transform(({ value }: TransformFnParams) => parseInt(value, 10))
-  offset: number;
-
-  @IsNumber()
-  @Min(1)
-  @IsOptional()
-  @Transform(({ value }: TransformFnParams) => parseInt(value, 10))
-  page: number;
+  offset?: number;
 }

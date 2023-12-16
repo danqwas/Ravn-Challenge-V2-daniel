@@ -1,4 +1,4 @@
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
