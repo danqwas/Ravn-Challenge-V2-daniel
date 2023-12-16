@@ -13,7 +13,7 @@ import { Auth } from './decorators/auth.decorator';
 import { GetUser } from './decorators/get-user.decorator';
 import { CreateUserDto, LoginUserDto, LogoutUserDto } from './dto';
 
-@ApiTags('Auth Controller')
+@ApiTags('Authentication')
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
