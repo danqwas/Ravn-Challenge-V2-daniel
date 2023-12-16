@@ -1,10 +1,5 @@
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-} from 'firebase/storage';
 import { PrismaService } from 'prisma/prisma.service';
-import { firebaseApp } from 'src/firebase/firebase.config';
+import { FirebaseService } from 'src/firebase/firebase.service';
 
 import {
   BadRequestException,
@@ -12,15 +7,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import {
-  FindProductQueryDto,
-  UpdateProductDto,
-} from './dto';
+import { FindProductQueryDto, UpdateProductDto } from './dto';
 import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly firebaseService: FirebaseService,
+  ) {}
 
   async create(createProductDto: CreateProductDto) {
     const product = await this.prismaService.product.create({
@@ -38,6 +33,9 @@ export class ProductsService {
       where: {
         ...conditions,
       },
+      include: {
+        images: true,
+      },
     });
   }
   async getProductById(id: string) {
@@ -45,12 +43,10 @@ export class ProductsService {
       where: {
         id,
       },
+      include: {
+        images: true,
+      },
     });
-    console.log(
-      '🚀 ~ file: products.service.ts:49 ~ ProductsService ~ getProductById ~ product:',
-      product,
-    );
-
     if (!product) {
       throw new NotFoundException('Product not found with this id' + id);
     }
@@ -61,19 +57,15 @@ export class ProductsService {
     const conditions = category
       ? { category: category, isVisible: true }
       : { isVisible: true };
-    console.log(
-      '🚀 ~ file: products.service.ts:65 ~ ProductsService ~ getAllPublishedProducts ~ conditions:',
-      conditions,
-    );
     const products = await this.prismaService.product.findMany({
       take: limit,
       skip: offset,
       where: conditions,
+
+      include: {
+        images: true,
+      },
     });
-    console.log(
-      '🚀 ~ file: products.service.ts:75 ~ ProductsService ~ getAllPublishedProducts ~ products:',
-      products,
-    );
     return products;
   }
   async getAvailableProductById(id: string) {
@@ -110,18 +102,66 @@ export class ProductsService {
       },
     });
   }
-  async createData(data: Buffer): Promise<void> {
-    const storage = getStorage(
-      firebaseApp,
-      'gs://ravn-challenge-v2-daniel.appspot.com',
-    );
-    const storageRef = ref(
-      storage,
-      'gs://ravn-challenge-v2-daniel.appspot.com',
-    );
-    storageRef.bucket = 'ravn-challenge-v2-daniel.appspot.com';
+  async addAnImage(file: Express.Multer.File, productId: string) {
+    const product = await this.prismaService.product.findUnique({
+      where: {
+        id: productId,
+      },
+    });
+    if (!product) {
+      throw new NotFoundException('Product not found with this id' + productId);
+    }
 
-    // upload the file
-    await uploadBytes(storageRef, data);
+    const url = await this.firebaseService.upload(file);
+
+    if (!url) {
+      // If firebase don't return a url so the error is a server error
+      throw new BadRequestException(
+        'Something went wrong while uploading the image to firebase',
+      );
+    }
+    const productImage = await this.prismaService.productImage.create({
+      data: {
+        url,
+        product: {
+          connect: {
+            id: productId,
+          },
+        },
+      },
+    });
+
+    return productImage;
+  }
+
+  async removeAnImage(productId: string, imageId: string) {
+    const productImage = await this.prismaService.productImage.findUnique({
+      where: {
+        id: imageId,
+        product_id: productId,
+      },
+    });
+    if (!productImage) {
+      throw new NotFoundException(
+        'Product image not found with this id' + imageId,
+      );
+    }
+    // Dividir la URL por '/'
+    const urlParts = productImage.url.split('/');
+
+    // El nombre del archivo estará en la última parte de la URL
+    const fileName = urlParts[urlParts.length - 1];
+    const isDeleted = await this.firebaseService.delete(fileName);
+
+    if (!isDeleted) {
+      throw new BadRequestException(
+        'Something went wrong while deleting the image from firebase',
+      );
+    }
+    return await this.prismaService.productImage.delete({
+      where: {
+        id: productImage.id,
+      },
+    });
   }
 }

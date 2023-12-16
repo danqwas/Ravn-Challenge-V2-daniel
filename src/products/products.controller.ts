@@ -1,3 +1,4 @@
+import { diskStorage } from 'multer';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 
 import {
@@ -10,19 +11,20 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 
-import {
-  CreateProductDto,
-  FindProductQueryDto,
-  UpdateProductDto,
-} from './dto';
+import { CreateProductDto, FindProductQueryDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
 @ApiTags('Products')
@@ -115,13 +117,57 @@ export class ProductsController {
   deleteAProduct(@Param('id', ParseUUIDPipe) id: string) {
     return this.productsService.delete(id);
   }
-  // @Post()
-  // @ApiOperation({ summary: 'Upload an image' })
-  // @ApiResponse({ status: 201, description: 'Image uploaded successfully' })
-  // @UseInterceptors(FileInterceptor('image'))
-  // @ApiConsumes('multipart/form-data')
-  // async uploadImage(@UploadedFile() image: Multer.File): Promise<void> {
-  //   const buffer = image.buffer; // Get the buffer containing the file data
-  //   await this.productsService.createData(buffer);
-  // }
+
+  @Post(':id/upload')
+  @ApiOperation({ summary: 'Upload an image to a product' })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter: (req, file, cb) => {
+        if (!RegExp(/\.(jpg|jpeg|png|gif)$/).exec(file.originalname)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+      storage: diskStorage({
+        destination: './static/products',
+        filename: (req, file, callback) => {
+          const fileName = `${Date.now()}-${file.originalname}`;
+          callback(null, fileName);
+        },
+      }),
+    }),
+  )
+  @ApiBearerAuth()
+  @Auth(UserRole.MANAGER)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      required: ['file'],
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Image file to be uploaded.',
+        },
+      },
+    },
+  })
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return await this.productsService.addAnImage(file, id);
+  }
+
+  @Delete(':productId/images/:imageId')
+  @ApiOperation({ summary: 'Remove an image from a product' })
+  @ApiBearerAuth()
+  @Auth(UserRole.MANAGER)
+  async removeImage(
+    @Param('productId', ParseUUIDPipe) productId: string,
+    @Param('imageId', ParseUUIDPipe) imageId: string,
+  ) {
+    return await this.productsService.removeAnImage(productId, imageId);
+  }
 }

@@ -1,4 +1,5 @@
 import { AuthModule } from 'src/auth/auth.module';
+import { FirebaseService } from 'src/firebase/firebase.service';
 
 import { Module } from '@nestjs/common';
 
@@ -8,6 +9,6 @@ import { ProductsService } from './products.service';
 @Module({
   imports: [AuthModule],
   controllers: [ProductsController],
-  providers: [ProductsService],
+  providers: [ProductsService, FirebaseService],
 })
 export class ProductsModule {}
