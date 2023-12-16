@@ -26,10 +26,19 @@ $ .env.template --> .env
 $ docker compose up -d
 
 # build the database tables with prisma command
-$ npx prisma migrate dev --name init
+$ npx prisma migrate dev --name "name_of_your_migration"
 
 # if you need to reset the database
 $ npx prisma migrate reset
+
+# if you need to seed the database
+$ npx prisma db seed
+
+# if you need to generate types
+$ npx prisma generate
+
+# if you need to deploy the database
+$ npx prisma migrate deploy
 
 # development
 $ yarn run start
@@ -47,6 +56,11 @@ $ yarn run start:prod
 - `POSTGRES_DB`: Database name
 - `POSTGRES_USER`: Database user
 - `DATABASE_URL`: Database URL
+- `JWT_SECRET`: JWT secret key
+- `FIREBASE_PRIVATE_KEY`: Firebase private key
+- `FIREBASE_PROJECT_ID`: Firebase project ID
+- `FIREBASE_CLIENT_EMAIL`: Firebase client email
+- `FIREBASE_STORAGE_BUCKET`: Firebase storage bucket
 
 ## Test
 
