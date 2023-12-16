@@ -58,14 +58,12 @@ describe('AuthService', () => {
 
       const user = await service.createAnUser(createUserDto);
 
-      // delete the user created
       await prismaService.user.delete({
         where: {
           id: user.id,
         },
       });
       expect(user.email).toEqual(createUserDto.email);
-      // Add more assertions based on your data model
     });
   });
 
@@ -93,7 +91,6 @@ describe('AuthService', () => {
       const result = await service.loginAnUser(loginUserDto);
 
       expect(result.access_token).toBeDefined();
-      // Add more assertions based on your data model
     });
 
     it('should throw UnauthorizedException if user is not found', async () => {
@@ -102,9 +99,7 @@ describe('AuthService', () => {
         password: 'Test123456',
       };
 
-      jest
-        .spyOn(service['prisma'].user, 'findUnique') // Replace with your actual Prisma service property
-        .mockResolvedValue(null);
+      jest.spyOn(service['prisma'].user, 'findUnique').mockResolvedValue(null);
 
       await expect(service.loginAnUser(loginUserDto)).rejects.toThrow(
         UnauthorizedException,
@@ -129,9 +124,7 @@ describe('AuthService', () => {
         isActive: true,
       };
 
-      jest
-        .spyOn(service['prisma'].user, 'findUnique') // Replace with your actual Prisma service property
-        .mockResolvedValue(user);
+      jest.spyOn(service['prisma'].user, 'findUnique').mockResolvedValue(user);
 
       await expect(service.loginAnUser(loginUserDto)).rejects.toThrow(
         UnauthorizedException,

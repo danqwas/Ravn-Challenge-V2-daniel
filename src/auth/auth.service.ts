@@ -16,9 +16,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // Create an user service
   async createAnUser(createUserDto: CreateUserDto): Promise<User> {
-    // first we need to hash the password
     const hashedPassword = await argon2.hash(createUserDto.password);
     const existingUser = await this.prisma.user.findUnique({
       where: {
@@ -26,10 +24,8 @@ export class AuthService {
       },
     });
     if (existingUser) {
-      // Handle the case where the email already exists
       throw new Error('User with this email already exists');
     }
-    // then we need to create the user with the hashed password
     return await this.prisma.user.create({
       data: {
         ...createUserDto,
@@ -38,9 +34,7 @@ export class AuthService {
     });
   }
 
-  // Login an user and return a Json with the JWT
   async loginAnUser(loginUserDto: LoginUserDto) {
-    // first we need to find the user
     const user = await this.prisma.user.findUnique({
       where: {
         email: loginUserDto.email,
@@ -49,7 +43,6 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Credentials are not valid');
     }
-    // then we need to compare the password
     const isPasswordValid = await argon2.verify(
       user.password,
       loginUserDto.password,
@@ -57,7 +50,6 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credentials are not valid');
     }
-    // check the json web token
     return {
       ...user,
       access_token: this.getJsonWebToken({
@@ -68,23 +60,21 @@ export class AuthService {
     };
   }
 
-  // Logout an user and remove the JWT token
   async logoutAnUser(logoutUserDto: LogoutUserDto, user: User) {
     const { refreshToken } = logoutUserDto;
 
-    // Check if the token is already in the blacklist
     const existingToken = await this.prisma.tokenBlacklist.findFirst({
       where: {
         token: refreshToken,
         userId: user.id,
       },
       orderBy: {
-        createdAt: 'desc', // Ordenar por createdAt en orden descendente
+        createdAt: 'desc',
       },
     });
     const userExists = await this.prisma.user.findUnique({
       where: {
-        id: user.id, // Replace with the actual user ID
+        id: user.id,
       },
     });
 
@@ -92,7 +82,6 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
 
-    // If the token is not in the blacklist, add it
     if (!existingToken) {
       await this.prisma.tokenBlacklist.create({
         data: {

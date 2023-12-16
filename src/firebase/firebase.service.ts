@@ -62,12 +62,10 @@ export class FirebaseService {
       return url;
     } catch (error) {
       console.error(error);
-      throw error; // Propagate the error after logging
+      throw error;
     }
   }
   async delete(fileName: string) {
-    // the fileName is the  url of the image i need the name
-
     const FIREBASE_STORAGE_BUCKET = this.configService.get(
       'FIREBASE_STORAGE_BUCKET',
     );

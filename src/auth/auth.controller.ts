@@ -58,7 +58,7 @@ export class AuthController {
     status: 200,
     description: 'Success, JWT should be removed on the client-side',
   })
-  @Auth() // Replace with your actual Auth decorator
+  @Auth()
   @ApiBearerAuth()
   @Post('logout')
   async logout(@Body() logoutUserDto: LogoutUserDto, @GetUser() user: User) {
