@@ -3,12 +3,13 @@ import { ProductsModule } from 'src/products/products.module';
 
 import { Module } from '@nestjs/common';
 
-import { CartsController } from './cart.controller';
-import { CartsService } from './cart.service';
+import { CartController } from './cart.controller';
+import { CartService } from './cart.service';
 
 @Module({
   imports: [AuthModule, ProductsModule],
-  controllers: [CartsController],
-  providers: [CartsService],
+  controllers: [CartController],
+  providers: [CartService],
+  exports: [CartService],
 })
-export class CartsModule {}
+export class CartModule {}

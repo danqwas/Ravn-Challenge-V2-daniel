@@ -9,13 +9,11 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User, UserRole } from '@prisma/client';
 
-import { PaginationQueryDto } from '../common/dto';
-import { CartsService } from './cart.service';
+import { CartService } from './cart.service';
 import { CreateCartItemDto, UpdateCartItemDto } from './dto';
 
 @Controller({
@@ -23,8 +21,8 @@ import { CreateCartItemDto, UpdateCartItemDto } from './dto';
   version: '1',
 })
 @ApiTags('Cart')
-export class CartsController {
-  constructor(private readonly cartsService: CartsService) {}
+export class CartController {
+  constructor(private readonly cartsService: CartService) {}
 
   @Post()
   @ApiBearerAuth()
@@ -41,11 +39,8 @@ export class CartsController {
   @ApiOperation({ summary: 'Get all cart items' })
   @ApiBearerAuth()
   @Auth(UserRole.CLIENT)
-  findUserCartItems(
-    @Query() paginationQueryDto: PaginationQueryDto,
-    @GetUser() user: User,
-  ) {
-    return this.cartsService.getUserCartItems(paginationQueryDto, user);
+  findUserCartItems(@GetUser() user: User) {
+    return this.cartsService.getUserCartItems(user);
   }
 
   @Get(':id')

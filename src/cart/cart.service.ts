@@ -1,5 +1,3 @@
-import { PaginationQueryDto } from 'src/common/dto';
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Cart, User } from '@prisma/client';
 
@@ -8,7 +6,7 @@ import { ProductsService } from '../products/products.service';
 import { CreateCartItemDto, UpdateCartItemDto } from './dto';
 
 @Injectable()
-export class CartsService {
+export class CartService {
   constructor(
     private prismaService: PrismaService,
     private productsService: ProductsService,
@@ -55,13 +53,10 @@ export class CartsService {
    * @param {User} user - The user for whom to retrieve the cart items.
    * @return {Promise<{ cartItems: CartItem[], totalPrice: string }>} - The cart items and total price.
    */
-  async getUserCartItems(paginationQueryDto: PaginationQueryDto, user: User) {
-    const { limit, offset } = paginationQueryDto;
+  async getUserCartItems(user: User) {
     const cart = await this.isCartExisting(user.id);
 
     const cartItems = await this.prismaService.cartItem.findMany({
-      skip: offset,
-      take: limit,
       where: { cart_id: cart.id },
       include: {
         product: true,
