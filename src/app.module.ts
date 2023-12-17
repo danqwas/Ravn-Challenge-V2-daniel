@@ -4,10 +4,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
-import { CartsModule } from './cart/cart.module';
+import { CartModule } from './cart/cart.module';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { HidePasswordInterceptor } from './interceptors/hide-password.interceptor';
+import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
+import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [
@@ -18,7 +20,9 @@ import { ProductsModule } from './products/products.module';
     PrismaModule,
     AuthModule,
     ProductsModule,
-    CartsModule,
+    CartModule,
+    OrdersModule,
+    LikesModule,
   ],
   controllers: [],
   providers: [

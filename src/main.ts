@@ -8,16 +8,13 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // Enable CORS
   app.enableCors({
     origin: [],
   });
-  // Enable versioning
   app.enableVersioning({
     defaultVersion: '1',
     type: VersioningType.URI,
   });
-  // Enable validation
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -25,9 +22,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  // Enable cookie parser
   app.use(cookieParser());
-  // Swagger Setup
   const options = new DocumentBuilder()
     .setTitle('Petstore API')
     .setDescription('Petstore API from ravn challenge')
