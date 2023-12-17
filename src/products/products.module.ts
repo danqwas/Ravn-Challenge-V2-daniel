@@ -1,8 +1,7 @@
-import { AuthModule } from 'src/auth/auth.module';
-import { FirebaseService } from 'src/firebase/firebase.service';
-
 import { Module } from '@nestjs/common';
 
+import { AuthModule } from '../auth/auth.module';
+import { FirebaseService } from '../firebase/firebase.service';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 

@@ -46,6 +46,10 @@ export class ProductsService {
         images: true,
       },
     });
+    console.log(
+      '🚀 ~ file: products.service.ts:49 ~ ProductsService ~ getProductById ~ product:',
+      product,
+    );
     if (!product) {
       throw new NotFoundException('Product not found with this id' + id);
     }
@@ -154,7 +158,7 @@ export class ProductsService {
         'Something went wrong while deleting the image from firebase',
       );
     }
-    return await this.prismaService.productImage.delete({
+    await this.prismaService.productImage.delete({
       where: {
         id: productImage.id,
       },
