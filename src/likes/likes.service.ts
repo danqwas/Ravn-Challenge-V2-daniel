@@ -1,7 +1,7 @@
-import { PrismaService } from 'prisma/prisma.service';
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
+
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class LikesService {
@@ -52,6 +52,13 @@ export class LikesService {
       totalLikes: product.Like.length,
     };
   }
+  /**
+   * Removes a like by its ID and user.
+   *
+   * @param {string} id - The ID of the like to be removed.
+   * @param {User} user - The user object representing the user who performed the like.
+   * @return {Promise<void>} - A promise that resolves when the like is successfully removed.
+   */
   async remove(id: string, user: User) {
     const like = await this.prismaService.like.findUnique({
       where: { id, user_id: user.id },

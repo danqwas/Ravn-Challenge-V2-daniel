@@ -1,5 +1,3 @@
-import { Auth, GetUser } from 'src/auth/decorators';
-
 import {
   Controller,
   Delete,
@@ -11,6 +9,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User, UserRole } from '@prisma/client';
 
+import { Auth, GetUser } from '../auth/decorators';
 import { LikesService } from './likes.service';
 
 @ApiTags('Likes')
@@ -26,10 +25,6 @@ export class LikesController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Like a product' })
   likeAProduct(@Param('id') id: string, @GetUser() user: User) {
-    console.log(
-      '🚀 ~ file: likes.controller.ts:32 ~ LikesController ~ productId:',
-      id,
-    );
     return this.likesService.likeAProduct(user, id);
   }
 

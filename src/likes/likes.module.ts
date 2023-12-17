@@ -1,8 +1,7 @@
-import { AuthModule } from 'src/auth/auth.module';
-import { ProductsModule } from 'src/products/products.module';
-
 import { Module } from '@nestjs/common';
 
+import { AuthModule } from '../auth/auth.module';
+import { ProductsModule } from '../products/products.module';
 import { LikesController } from './likes.controller';
 import { LikesService } from './likes.service';
 
