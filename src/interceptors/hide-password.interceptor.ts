@@ -15,7 +15,6 @@ export class HidePasswordInterceptor implements NestInterceptor {
   ): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       map((data) => {
-        // Utilizar el operador de encadenamiento opcional (?)
         const { password, ...rest } = data ?? {};
         if (password) {
           return {

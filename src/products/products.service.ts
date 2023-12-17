@@ -114,7 +114,6 @@ export class ProductsService {
     const url = await this.firebaseService.upload(file);
 
     if (!url) {
-      // If firebase don't return a url so the error is a server error
       throw new BadRequestException(
         'Something went wrong while uploading the image to firebase',
       );
@@ -145,10 +144,8 @@ export class ProductsService {
         'Product image not found with this id' + imageId,
       );
     }
-    // Dividir la URL por '/'
     const urlParts = productImage.url.split('/');
 
-    // El nombre del archivo estará en la última parte de la URL
     const fileName = urlParts[urlParts.length - 1];
     const isDeleted = await this.firebaseService.delete(fileName);
 
