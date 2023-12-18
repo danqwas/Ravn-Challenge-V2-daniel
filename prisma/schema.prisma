@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String           @id @default(uuid())  @db.Uuid
+  email        String           @unique
+  firstName    String?
+  lastName     String?
+  password     String
+  isActive     Boolean          @default(true)
+  roles        UserRole[]       @default([])
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @default(now())
+  cart         Cart?
+  likes        Like[]
+  orders       Order[]
+  tokenBlacklists TokenBlacklist[]
+}
+model Product {
+  id          String     @id @default(uuid())  @db.Uuid
+  name        String
+  description String?
+  category    String
+  price       Float
+  stock       Int
+  isVisible   Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now())
+  CartItem    CartItem[]
+  OrderItem   OrderItem[]
+  Like        Like[]
+  images      ProductImage[]
+}
+enum UserRole {
+  MANAGER
+  CLIENT
+}
+model ProductImage {
+  id        String     @id @default(uuid())  @db.Uuid
+  url       String
+  product_id String @db.Uuid
+  product    Product @relation(fields: [product_id], references: [id])
+}
+
+model Like {
+ id        String     @id @default(uuid())  @db.Uuid
+  user      User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String     @db.Uuid
+  product   Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id String   @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Cart {
+  id        String     @id @default(uuid())  @db.Uuid
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String     @db.Uuid @unique
+  cardItems CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
+}
+
+model CartItem {
+  id        String     @id @default(uuid())  @db.Uuid
+  cart      Cart       @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  cart_id   String     @db.Uuid
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String     @db.Uuid
+  quantity  Int
+}
+
+model Order {
+  id        String     @id @default(uuid())  @db.Uuid
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String      @db.Uuid
+  items     OrderItem[]
+  total     Float
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now())
+}
+
+model OrderItem {
+  id        String     @id @default(uuid())  @db.Uuid
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String   @db.Uuid
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productId String @db.Uuid
+  price     Float
+  quantity  Int
+}
+model TokenBlacklist {
+  id        String   @id @default(uuid())  @db.Uuid
+  token     String   @unique
+  createdAt DateTime @default(now()) 
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
+}
