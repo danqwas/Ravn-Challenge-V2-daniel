@@ -16,7 +16,7 @@ model User {
   isActive     Boolean          @default(true)
   roles        UserRole[]       @default([])
   createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
   cart         Cart?
   likes        Like[]
   orders       Order[]
@@ -31,7 +31,7 @@ model Product {
   stock       Int
   isVisible   Boolean        @default(true)
   createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
   CartItem    CartItem[]
   OrderItem   OrderItem[]
   Like        Like[]
@@ -55,7 +55,7 @@ model Like {
   product   Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
   product_id String   @db.Uuid
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Cart {
@@ -64,7 +64,7 @@ model Cart {
   userId    String     @db.Uuid @unique
   cardItems CartItem[]
   createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model CartItem {
@@ -83,7 +83,7 @@ model Order {
   items     OrderItem[]
   total     Float
   createdAt DateTime    @default(now())
-  updatedAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model OrderItem {
