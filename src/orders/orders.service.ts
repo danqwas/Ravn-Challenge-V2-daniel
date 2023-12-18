@@ -1,10 +1,10 @@
-import { CartService } from 'src/cart/cart.service';
 import { PaginationQueryDto } from 'src/common/dto';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { CartService } from '../cart/cart.service';
 
 @Injectable()
 export class OrdersService {

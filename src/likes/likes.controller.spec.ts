@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Like, Product, User } from '@prisma/client';
 
-import { PrismaModule } from '../../prisma/prisma.module';
 import { PrismaService } from '../../prisma/prisma.service';
-import { AuthModule } from '../auth/auth.module';
 import { LikesController } from './likes.controller';
+import { LikesModule } from './likes.module';
 import { LikesService } from './likes.service';
 
 describe('LikesController', () => {
@@ -14,7 +13,7 @@ describe('LikesController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LikesController],
       providers: [LikesService, PrismaService],
-      imports: [AuthModule, PrismaModule],
+      imports: [LikesModule],
     }).compile();
 
     controller = module.get<LikesController>(LikesController);
@@ -118,20 +117,29 @@ describe('LikesController', () => {
           updatedAt: new Date(),
         },
       ];
-
-      jest.spyOn(controller, 'findTotalLikes').mockResolvedValue({
-        totalLikes: 2,
+      jest
+        .spyOn(likesService['prismaService'].product, 'findUnique')
+        .mockResolvedValue({
+          ...product,
+        });
+      const productObtained = await likesService[
+        'prismaService'
+      ].product.findUnique({
+        where: {
+          id: product.id,
+        },
+        include: {
+          Like: true,
+        },
       });
-
-      jest.spyOn(likesService, 'findTotalLikes').mockResolvedValue({
-        totalLikes: 2,
-      });
-      const totalLikes = likesService.findTotalLikes(product.id);
-      expect(controller.findTotalLikes(product.id)).resolves.toEqual({
-        totalLikes: likes.length,
-      });
-      expect(totalLikes).resolves.toEqual({
-        totalLikes: likes.length,
+      productObtained.Like = likes;
+      jest
+        .spyOn(likesService, 'findTotalLikes')
+        .mockImplementation(() =>
+          Promise.resolve({ totalLikes: productObtained.Like.length }),
+        );
+      expect(controller.findTotalLikes(product.id)).toEqual({
+        totalLikes: productObtained.Like,
       });
     });
 

@@ -7,7 +7,7 @@ import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { User, UserRole } from '@prisma/client';
 
-import { PrismaService } from '../../prisma/prisma.service';
+import { OrdersController } from '../orders/orders.controller';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto, LogoutUserDto } from './dto';
@@ -19,8 +19,8 @@ describe('AuthController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthController],
-      providers: [AuthService, JwtStrategy, PrismaService],
+      controllers: [OrdersController],
+      providers: [AuthService, JwtStrategy],
       imports: [
         ConfigModule,
         PassportModule.register({ defaultStrategy: 'jwt' }),

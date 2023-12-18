@@ -1,5 +1,3 @@
-import { Auth, GetUser } from 'src/auth/decorators';
-
 import {
   Body,
   Controller,
@@ -13,6 +11,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User, UserRole } from '@prisma/client';
 
+import { Auth, GetUser } from '../auth/decorators';
 import { CartService } from './cart.service';
 import { CreateCartItemDto, UpdateCartItemDto } from './dto';
 

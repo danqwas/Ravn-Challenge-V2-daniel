@@ -22,7 +22,6 @@ export class LikesService {
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-
     return await this.prismaService.like.create({
       data: {
         user: { connect: { id: user.id } },
@@ -43,7 +42,7 @@ export class LikesService {
         Like: true,
       },
     });
-
+    console.log('Product:', product.Like);
     if (!product) {
       throw new NotFoundException('Product not found');
     }

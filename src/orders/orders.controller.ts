@@ -1,6 +1,3 @@
-import { Auth, GetUser } from 'src/auth/decorators';
-import { PaginationQueryDto } from 'src/common/dto';
-
 import {
   Controller,
   Get,
@@ -12,6 +9,8 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User, UserRole } from '@prisma/client';
 
+import { Auth, GetUser } from '../auth/decorators';
+import { PaginationQueryDto } from '../common/dto';
 import { OrdersService } from './orders.service';
 
 @ApiTags('Orders')
