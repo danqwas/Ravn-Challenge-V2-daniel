@@ -30,6 +30,13 @@ export class AuthController {
     },
   })
   @Post('register')
+  @ApiOperation({
+    summary: 'Create user',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'User created successfully',
+  })
   create(@Body() createAuthDto: CreateUserDto) {
     return this.authService.createAnUser(createAuthDto);
   }
@@ -41,6 +48,9 @@ export class AuthController {
       email: '9zTqH@example.com',
       password: 'Abc123456',
     },
+  })
+  @ApiOperation({
+    summary: 'Login user',
   })
   @Post('login')
   login(@Body() loginUserDto: LoginUserDto) {

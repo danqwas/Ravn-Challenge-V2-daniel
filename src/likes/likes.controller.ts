@@ -29,6 +29,7 @@ export class LikesController {
   }
 
   @Get('products/:productId/likes')
+  @ApiOperation({ summary: 'Find total number of likes for a product' })
   findTotalLikes(@Param('productId', ParseUUIDPipe) productId: string) {
     return this.likesService.findTotalLikes(productId);
   }
