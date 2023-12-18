@@ -55,7 +55,6 @@ describe('OrdersController', () => {
 
   describe('createAnOrder', () => {
     it('should create an order for the authenticated user', async () => {
-      // Mock user and service method
       const mockUser: User = { id: '1', roles: [UserRole.CLIENT] } as User;
       jest
         .spyOn(ordersService, 'createAnOrder')
@@ -64,17 +63,15 @@ describe('OrdersController', () => {
         cartItems: [],
         totalPrice: '0',
       });
-      // Call the controller method
+
       const result = await controller.createAnOrder(mockUser);
 
-      // Assert the result
-      expect(result).toEqual(mockOrderData); // Adjust this based on your expected return data
+      expect(result).toEqual(mockOrderData);
     });
   });
 
   describe('getMyOrders', () => {
     it('should get orders for the authenticated user', async () => {
-      // Mock user and service method
       const mockUser: User = {
         id: '1',
         roles: [UserRole.CLIENT],
@@ -84,20 +81,17 @@ describe('OrdersController', () => {
         .spyOn(ordersService, 'getMyOrders')
         .mockResolvedValue([mockOrderData]);
 
-      // Call the controller method
       const result = await controller.getMyOrders(
         mockPaginationQuery,
         mockUser,
       );
 
-      // Assert the result
-      expect(result).toEqual([mockOrderData]); // Adjust this based on your expected return data
+      expect(result).toEqual([mockOrderData]);
     });
   });
 
   describe('getAnOrder', () => {
     it('should get the details of a specific order for the authenticated manager', async () => {
-      // Mock parameters and service method
       const mockOrderId = '123';
 
       const mockOrderData = {
@@ -126,16 +120,13 @@ describe('OrdersController', () => {
 
       jest.spyOn(ordersService, 'getAnOrder').mockResolvedValue(mockOrderData);
 
-      // Call the controller method
       const result = await controller.getAnOrder(mockOrderId);
 
-      // Assert the result
-      expect(result).toEqual(mockOrderData); // Adjust this based on your expected return data
+      expect(result).toEqual(mockOrderData);
     });
   });
 });
 
-// Mock order data for testing purposes
 const mockOrderData = {
   id: '1',
   userId: '1',
